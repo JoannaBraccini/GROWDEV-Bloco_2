@@ -15,7 +15,7 @@ export default function Cadastro() {
       <label htmlFor="">Confirmar senha:</label>
       <input type="text" name="" id="" />
 
-      <Link to="/home">
+      <Link to="/">
         <ButtonDefault title="Salvar" />
       </Link>
       <Link to="/login">
