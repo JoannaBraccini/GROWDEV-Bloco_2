@@ -15,7 +15,7 @@ export function Home() {
       <Banner
         background={homebanner}
         title="A Biblioteca Encantada"
-        subtitle="Seja Bem-vindo(a)!"
+        subtitle="Entre as páginas de um livro, encontramos mundos inteiros esperando para serem explorados."
         onSearch={handleSearch}
       />
       <SectionCards />

@@ -6,6 +6,7 @@ type TVariant = "light" | "dark" | "error";
 interface ButtonProps {
   size?: TSize;
   variant?: TVariant;
+  floating?: boolean;
 }
 
 const variantColors = {
@@ -53,4 +54,21 @@ export const Button = styled.button<ButtonProps>`
   }
 
   padding: ${(props) => (props.size === "small" ? "12px 17px;" : "18px 28px;")};
+
+  ${(props) => {
+    switch (props.floating) {
+      case true:
+        return `
+        border-radius: 50%;
+          position: fixed;
+          bottom: 15px;
+          right: 10px;
+          font-size: 2rem;
+          font-weight: 600;          
+        `;
+
+      default:
+        return;
+    }
+  }}
 `;

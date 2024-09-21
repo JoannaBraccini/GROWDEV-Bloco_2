@@ -31,5 +31,6 @@ export const Form = styled.form`
   }
   button {
     align-self: flex-start;
+    min-width: 7rem;
   }
 `;

@@ -2,65 +2,92 @@ import cataloguebanner from "../assets/backgrounds/cataloguebanner.webp";
 import { TableContainer } from "../components/styles/TableContainer";
 import { DefaultLayout } from "../configs/layouts/DefaultLayout";
 import { Container } from "../components/styles/Container";
-import { ModalExclude } from "../components/ModalExclude";
+import { ModalDelete } from "../components/ModalDelete";
 import { TableBooks } from "../components/TableBooks";
 import { Button } from "../components/styles/Button";
 import { books as booksDb } from "../database/books";
-import { ModalForm } from "../components/ModalForm";
 import { Banner } from "../components/Banner";
 import { useState } from "react";
-import { Book } from "../types";
+import { Book, Toast } from "../types";
+import { ModalForm } from "../components/ModalForm";
+import { ToastDisplay } from "../components/ToastDisplay";
+import { FloatButton } from "../components/styles/FloatButton";
+
+const emptyToast: Toast = {
+  type: "success",
+  duration: 3000,
+  message: "",
+};
 
 export function Catalogue() {
+  //filtros
   const [filterAuthor, setFilterAuthor] = useState("");
   const [filterTitle, setFilterTitle] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
-
+  //database
   const [books, setBooks] = useState<Book[]>(booksDb);
+
   const [bookId, setBookId] = useState<string>("");
   const [bookTitle, setBookTitle] = useState<string>("");
-  const [bookToEdit, setBookToEdit] = useState<Book>();
+  const [bookToEdit, setBookToEdit] = useState<Book | null>(null);
+  //modais
+  const [openModal, setOpenModal] = useState(false);
+  const [openModalDelete, setOpenModalDelete] = useState(false);
+  //toast
+  const [toastProps, setToastProps] = useState<Toast>(emptyToast);
+  const [showToast, setShowToast] = useState(false);
 
-  const [showModalForm, setShowModalForm] = useState(false);
-  const [showModalExclude, setShowModalExclude] = useState(false);
-
-  const emptyBook: Book = {
-    id: "",
-    title: "",
-    author: "",
-    genre: "",
-    synopsis: "",
-    yearPublished: "",
-    registerDate: "",
+  const handleCloseToast = () => {
+    setShowToast(false);
   };
 
+  function handleModal() {
+    setOpenModal(!openModal);
+  }
   //crud create
-  const handleAddClick = () => {
-    setBookToEdit(emptyBook);
-    setShowModalForm(true);
-  };
+  const handleAdd = (newBook: Book) => {
+    setBooks((prevState) => [...prevState, newBook]);
+    console.log(newBook);
 
-  const addBook = (book: Book) => {
-    setBooks((prevBooks) => [...prevBooks, book]);
+    setToastProps({
+      message: "Livro registrado com sucesso",
+      duration: 3000,
+      type: "success",
+    });
+
+    setShowToast(!showToast);
+    handleModal();
   };
 
   //crud update
-  const handleUpdateClick = (book: Book) => {
-    if (book.id !== "") setBookToEdit(book);
-    setShowModalForm(true);
+  const handleUpdateClick = (id: string) => {
+    console.log("ATUALIZANDO....  =>", id);
   };
 
-  const updateBook = (book: Book) => {
-    setBooks((prevBooks) =>
-      prevBooks.map((b) => (b.id === book.id ? book : b))
-    );
+  const handleUpdate = (book: Book) => {
+    setBooks((prevState) => [...prevState, book]);
+
+    setToastProps({
+      message: "Livro atualizado com sucesso",
+      duration: 3000,
+      type: "success",
+    });
+
+    setShowToast(!showToast);
+    handleModal();
   };
 
   //crud delete
+  function handleModalDelete() {
+    setOpenModalDelete(!openModalDelete);
+  }
+
   const handleDeleteClick = (book: Book) => {
-    setBookId(book.id);
-    setBookTitle(book.title);
-    setShowModalExclude(true);
+    if (book.id) {
+      setBookId(book.id);
+      setBookTitle(book.title);
+      setOpenModalDelete(!openModalDelete);
+    }
   };
 
   const confirmDelete = () => {
@@ -69,33 +96,29 @@ export function Catalogue() {
       setBookId("");
       setBookTitle("");
     }
-    setShowModalExclude(false);
+    setOpenModalDelete(!openModalDelete);
+    setToastProps({
+      message: "Livro excluído com sucesso",
+      duration: 3000,
+      type: "success",
+    });
+
+    setShowToast(!showToast);
   };
 
   const deleteBook = (bookId: string) => {
     setBooks((prevBooks) => prevBooks.filter((book) => book.id !== bookId));
   };
 
-  const cancel = () => {
-    setBookToEdit(undefined);
-    setBookId("");
-    setBookTitle("");
-    setShowModalExclude(false);
-    setShowModalForm(false);
-  };
-
   return (
     <DefaultLayout>
       <Banner
         background={cataloguebanner}
-        title="Nosso Catálogo"
-        subtitle="Entre as páginas de um livro, encontramos mundos inteiros esperando para serem explorados."
+        title="Catálogo - Área Logada"
+        subtitle="Administrador: Dona Clara"
       />
       <TableContainer>
-        <Container gap="20px">
-          <Button size="small" variant="dark" onClick={handleAddClick}>
-            Novo Livro
-          </Button>
+        <Container gap="20px" notPadding>
           <input
             type="text"
             placeholder="Filtrar por autor"
@@ -123,18 +146,30 @@ export function Catalogue() {
           filterTitle={filterTitle}
           filterGenre={filterGenre}
         />
+        <Button floating onClick={handleModal}>
+          +
+        </Button>
         <ModalForm
-          isOpen={showModalForm}
-          book={bookToEdit ? bookToEdit : emptyBook}
-          onClose={cancel}
-          onConfirm={bookToEdit?.id !== "" ? updateBook : addBook}
+          isOpen={openModal}
+          onClose={handleModal}
+          onSave={handleAdd}
+          onUpdate={handleUpdate}
         />
-        <ModalExclude
-          isOpen={showModalExclude}
-          onClose={cancel}
+        <ModalDelete
+          isOpen={openModalDelete}
+          onClose={handleModalDelete}
           onConfirm={confirmDelete}
-          bookTitle={bookTitle || ""}
+          bookTitle={bookTitle}
+          bookId={bookId}
         />
+        {showToast && (
+          <ToastDisplay
+            message={toastProps.message}
+            duration={toastProps.duration}
+            type={toastProps.type}
+            onClose={handleCloseToast}
+          />
+        )}
       </TableContainer>
     </DefaultLayout>
   );
