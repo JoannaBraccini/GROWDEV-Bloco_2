@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "lojas" ADD COLUMN     "data_hora_abertura" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

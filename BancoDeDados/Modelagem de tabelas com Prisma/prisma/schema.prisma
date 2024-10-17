@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+  //previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  //extensions = [hstore(schema: "atividades")]
+}
+
+model User {
+  id         String  @id @default(uuid()) @db.Uuid
+  name       String  @map("nome") @db.VarChar(100)
+  age        Int     @map("idade")
+  email      String  @unique @db.VarChar(50)
+  password   String  @map("senha")
+  githubLink String? @map("link_github") @db.VarChar(50)
+
+  createdAt DateTime @default(now()) @map("criado_em")
+  updatedAt DateTime @updatedAt @map("atualizado_em")
+
+  @@map("usuarios")
+}
+
+enum Disponibilidade {
+  SIM
+  NAO
+}
+
+model Product {
+  id          String           @id @default(uuid()) @db.Uuid
+  description String           @map("descricao")
+  price       Float            @map("valor")
+  itemQty     Int              @map("qtd_estoque")
+  itemType    String           @map("tipo_produto") @db.VarChar(10)
+  available   Disponibilidade? @map("disponivel")
+
+  createdAt DateTime @default(now()) @map("criado_em")
+  updatedAt DateTime @updatedAt @map("atualizado_em")
+
+  @@map("produtos")
+}
+
+model Store {
+  cnpj      String   @id @unique @db.Char(14)
+  name      String   @map("nome") @db.VarChar(200)
+  industry  String?  @default("alimentacao") @map("segmento")
+  address   String   @map("endereco")
+  phone     String?  @map("telefone") @db.VarChar(100)
+  branchQty Int      @map("qtd_filiais")
+  openingDT DateTime @default(now()) @map("data_hora_abertura")
+
+  createdAt DateTime @default(now()) @map("criado_em")
+  updatedAt DateTime @updatedAt @map("atualizado_em")
+
+  @@map("lojas")
+}
+
+model Suplier {
+  id     String @id @default(uuid()) @db.Uuid
+  name   String @map("nome") @db.VarChar(100)
+  email  String @unique @db.VarChar(50)
+  rating Int    @map("avaliacao")
+
+  createdAt DateTime @default(now()) @map("criado_em")
+  updatedAt DateTime @updatedAt @map("atualizado_em")
+
+  @@map("fornecedores")
+}
