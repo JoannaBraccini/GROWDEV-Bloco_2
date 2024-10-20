@@ -8,7 +8,7 @@ import { Button } from "../components/styles/Button";
 import { books as booksDb } from "../database/books";
 import { ModalForm } from "../components/ModalForm";
 import { Banner } from "../components/Banner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Book } from "../types";
 
 export function Catalogue() {
@@ -16,7 +16,7 @@ export function Catalogue() {
   const [filterTitle, setFilterTitle] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
 
-  const [books, setBooks] = useState<Book[]>(booksDb);
+  const [books, setBooks] = useState<Book[]>([]);
   const [bookId, setBookId] = useState<string>("");
   const [bookTitle, setBookTitle] = useState<string>("");
   const [bookToEdit, setBookToEdit] = useState<Book>();
@@ -34,29 +34,51 @@ export function Catalogue() {
     registerDate: new Date(),
   };
 
-  //crud create
+  // Carregar livros do database e do localStorage ao montar o componente
+  useEffect(() => {
+    const storedBooks = localStorage.getItem("books");
+    const parsedStoredBooks = storedBooks ? JSON.parse(storedBooks) : [];
+
+    // Combinar os livros do database com os do localStorage
+    const combinedBooks = [...booksDb, ...parsedStoredBooks];
+    setBooks(combinedBooks);
+  }, []);
+
+  // Salvar os livros atualizados no localStorage
+  const saveToLocalStorage = (updatedBooks: Book[]) => {
+    const booksToSave = updatedBooks.filter(
+      (book) => !booksDb.some((b) => b.id === book.id)
+    );
+    localStorage.setItem("books", JSON.stringify(booksToSave));
+  };
+
+  // CRUD - Create
   const handleAddClick = () => {
     setBookToEdit(emptyBook);
     setShowModalForm(true);
   };
 
-  const addBook = (book: Book) => {
-    setBooks((prevBooks) => [...prevBooks, book]);
+  const addBook = (newBook: Book) => {
+    const updatedBooks = [...books, newBook];
+    setBooks(updatedBooks);
+    saveToLocalStorage(updatedBooks); // Salvar no localStorage após adicionar o novo livro
   };
 
-  //crud update
+  // CRUD - Update
   const handleUpdateClick = (book: Book) => {
     if (book.id !== "") setBookToEdit(book);
     setShowModalForm(true);
   };
 
-  const updateBook = (book: Book) => {
-    setBooks((prevBooks) =>
-      prevBooks.map((b) => (b.id === book.id ? book : b))
+  const updateBook = (updatedBook: Book) => {
+    const updatedBooks = books.map((book) =>
+      book.id === updatedBook.id ? updatedBook : book
     );
+    setBooks(updatedBooks);
+    saveToLocalStorage(updatedBooks); // Salvar no localStorage após atualizar o livro
   };
 
-  //crud delete
+  // CRUD - Delete
   const handleDeleteClick = (book: Book) => {
     setBookId(book.id);
     setBookTitle(book.title);
@@ -73,7 +95,11 @@ export function Catalogue() {
   };
 
   const deleteBook = (bookId: string) => {
-    setBooks((prevBooks) => prevBooks.filter((book) => book.id !== bookId));
+    setBooks((prevBooks) => {
+      const updatedBooks = prevBooks.filter((book) => book.id !== bookId);
+      saveToLocalStorage(updatedBooks); // Remover do localStorage
+      return updatedBooks;
+    });
   };
 
   const cancel = () => {

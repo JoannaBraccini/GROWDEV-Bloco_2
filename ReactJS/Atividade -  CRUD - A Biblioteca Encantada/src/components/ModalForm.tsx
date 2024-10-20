@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Book } from "../types";
 import { Button } from "./styles/Button";
 import { Form } from "./styles/Form";
@@ -20,29 +20,37 @@ export function ModalForm({
   onClose,
   onConfirm,
 }: ModalFormProps) {
-  const [title, setTitle] = useState(book?.title || "");
-  const [author, setAuthor] = useState(book?.author || "");
-  const [yearPublished, setYearPublished] = useState(book?.yearPublished || "");
-  const [genre, setGenre] = useState(book?.genre || "");
-  const [synopsis, setSynopsis] = useState(book?.synopsis || "");
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [yearPublished, setYearPublished] = useState("");
+  const [genre, setGenre] = useState("");
+  const [synopsis, setSynopsis] = useState("");
+
+  // Sincroniza os estados com o livro passado por props sempre que o modal for aberto ou o livro mudar
+  useEffect(() => {
+    if (isOpen) {
+      setTitle(book.title || "");
+      setAuthor(book.author || "");
+      setYearPublished(book.yearPublished || "");
+      setGenre(book.genre || "");
+      setSynopsis(book.synopsis || "");
+    }
+  }, [isOpen, book]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (title && author && yearPublished && genre && synopsis) {
-      if (book?.id === "") {
-        const newBook = {
-          title,
-          author,
-          yearPublished,
-          genre,
-          synopsis,
-          id: uuid(),
-          registerDate: new Date(),
-        };
-        onConfirm(newBook); // Passa o livro adicionado
-      } else {
-        onConfirm(book);
-      }
+      const updatedBook: Book = {
+        ...book,
+        title,
+        author,
+        yearPublished,
+        genre,
+        synopsis,
+        id: book.id || uuid(), // Se for novo, gera um id
+        registerDate: book.registerDate || new Date(),
+      };
+      onConfirm(updatedBook); // Passa o livro atualizado ou novo para o componente pai (catalogue)
       onClose();
     } else {
       alert("Todos os campos são obrigatórios!");
