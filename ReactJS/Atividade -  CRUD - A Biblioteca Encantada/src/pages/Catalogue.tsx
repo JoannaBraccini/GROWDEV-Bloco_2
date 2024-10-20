@@ -2,7 +2,7 @@ import cataloguebanner from "../assets/backgrounds/cataloguebanner.webp";
 import { TableContainer } from "../components/styles/TableContainer";
 import { DefaultLayout } from "../configs/layouts/DefaultLayout";
 import { Container } from "../components/styles/Container";
-import { ModalExclude } from "../components/ModalDelete";
+import { ModalDelete } from "../components/ModalDelete";
 import { TableBooks } from "../components/TableBooks";
 import { Button } from "../components/styles/Button";
 import { books as booksDb } from "../database/books";
@@ -22,7 +22,7 @@ export function Catalogue() {
   const [bookToEdit, setBookToEdit] = useState<Book>();
 
   const [showModalForm, setShowModalForm] = useState(false);
-  const [showModalExclude, setShowModalExclude] = useState(false);
+  const [showModalDelete, setShowModalDelete] = useState(false);
 
   const emptyBook: Book = {
     id: "",
@@ -31,7 +31,7 @@ export function Catalogue() {
     genre: "",
     synopsis: "",
     yearPublished: "",
-    registerDate: "",
+    registerDate: new Date(),
   };
 
   //crud create
@@ -60,7 +60,7 @@ export function Catalogue() {
   const handleDeleteClick = (book: Book) => {
     setBookId(book.id);
     setBookTitle(book.title);
-    setShowModalExclude(true);
+    setShowModalDelete(true);
   };
 
   const confirmDelete = () => {
@@ -69,7 +69,7 @@ export function Catalogue() {
       setBookId("");
       setBookTitle("");
     }
-    setShowModalExclude(false);
+    setShowModalDelete(false);
   };
 
   const deleteBook = (bookId: string) => {
@@ -80,7 +80,7 @@ export function Catalogue() {
     setBookToEdit(undefined);
     setBookId("");
     setBookTitle("");
-    setShowModalExclude(false);
+    setShowModalDelete(false);
     setShowModalForm(false);
   };
 
@@ -129,8 +129,8 @@ export function Catalogue() {
           onClose={cancel}
           onConfirm={bookToEdit?.id !== "" ? updateBook : addBook}
         />
-        <ModalExclude
-          isOpen={showModalExclude}
+        <ModalDelete
+          isOpen={showModalDelete}
           onClose={cancel}
           onConfirm={confirmDelete}
           bookTitle={bookTitle || ""}

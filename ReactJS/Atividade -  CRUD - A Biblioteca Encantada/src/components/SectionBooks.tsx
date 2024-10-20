@@ -9,7 +9,7 @@ interface SectionBooksProps {
     yearPublished: string;
     genre: string;
     synopsis: string;
-    registerDate: string;
+    registerDate: Date;
   }[];
 }
 
@@ -26,7 +26,9 @@ export function SectionBooks({ books }: SectionBooksProps) {
             </h4>
             <h5>{book.genre}</h5>
             <p>{book.synopsis}</p>
-            <small>Adicionado em {book.registerDate}</small>
+            <small>
+              Adicionado em {book.registerDate.toLocaleDateString()}
+            </small>
           </Book>
         ))
       ) : (

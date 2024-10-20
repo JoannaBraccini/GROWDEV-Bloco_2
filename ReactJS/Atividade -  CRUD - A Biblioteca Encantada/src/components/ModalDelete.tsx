@@ -2,19 +2,19 @@ import { Button } from "./styles/Button";
 import { Modal } from "./styles/Modal";
 import { Title } from "./styles/Title";
 
-interface ModalExcludeProps {
+interface ModalDeleteProps {
   isOpen: boolean;
   bookTitle: string;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-export function ModalExclude({
+export function ModalDelete({
   isOpen,
   bookTitle,
   onClose,
   onConfirm,
-}: ModalExcludeProps) {
+}: ModalDeleteProps) {
   return (
     <>
       {isOpen && (

@@ -5,7 +5,7 @@ import { Form } from "./styles/Form";
 import { FormContainer } from "./styles/FormContainer";
 import { Modal } from "./styles/Modal";
 import { Title } from "./styles/Title";
-// import { v4 as uuid } from "uuid";
+import { v4 as uuid } from "uuid";
 
 interface ModalFormProps {
   isOpen: boolean;
@@ -18,8 +18,8 @@ export function ModalForm({
   isOpen,
   book,
   onClose,
-}: //   onConfirm,
-ModalFormProps) {
+  onConfirm,
+}: ModalFormProps) {
   const [title, setTitle] = useState(book?.title || "");
   const [author, setAuthor] = useState(book?.author || "");
   const [yearPublished, setYearPublished] = useState(book?.yearPublished || "");
@@ -28,25 +28,25 @@ ModalFormProps) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // if (title && author && yearPublished && genre && synopsis) {
-    //   if (book?.id === "") {
-    //     const newBook = {
-    //       title,
-    //       author,
-    //       yearPublished,
-    //       genre,
-    //       synopsis,
-    //       id: uuid(),
-    //       registerDate: new Date().toISOString().split("T")[0],
-    //     };
-    //     onConfirm(newBook); // Passa o livro adicionado
-    //   } else {
-    //     onConfirm(book);
-    //   }
-    //   onClose();
-    // } else {
-    //   alert("Todos os campos são obrigatórios!");
-    // }
+    if (title && author && yearPublished && genre && synopsis) {
+      if (book?.id === "") {
+        const newBook = {
+          title,
+          author,
+          yearPublished,
+          genre,
+          synopsis,
+          id: uuid(),
+          registerDate: new Date(),
+        };
+        onConfirm(newBook); // Passa o livro adicionado
+      } else {
+        onConfirm(book);
+      }
+      onClose();
+    } else {
+      alert("Todos os campos são obrigatórios!");
+    }
   };
 
   return (
@@ -60,7 +60,7 @@ ModalFormProps) {
             }}
           >
             <Title>
-              {book ? `Editar ${book.title}` : "Adicionar Novo Livro"}
+              {book.id ? `Editar ${book.title}` : "Adicionar Novo Livro"}
             </Title>
             <FormContainer buttonAlign="flex-end">
               <Form onSubmit={handleSubmit}>
@@ -105,7 +105,7 @@ ModalFormProps) {
                 </label>
                 <div className="buttons">
                   <Button type="submit" size="small">
-                    {book ? "Atualizar" : "Adicionar"}
+                    {book.id ? "Atualizar" : "Adicionar"}
                   </Button>
                   <Button
                     type="button"
