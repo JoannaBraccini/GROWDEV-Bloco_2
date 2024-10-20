@@ -54,12 +54,6 @@ export function Catalogue() {
     setShowModalForm(true);
   };
 
-  // const addBook = (newBook: Book) => {
-  //   const updatedBooks = [...books, newBook];
-  //   setBooks(updatedBooks);
-  //   saveToLocalStorage(updatedBooks); // Salvar no localStorage após adicionar o novo livro
-  // };
-
   const handleUpdateClick = (book: Book) => {
     if (book.id !== "") setBookToEdit(book);
     setShowModalForm(true);
@@ -75,7 +69,14 @@ export function Catalogue() {
     const bookExists = books.some((book) => book.id === updatedBook.id);
     // Se o livro não existe, adiciona à lista
     if (!bookExists) {
-      updatedBooks.push(updatedBook);
+      updatedBooks.unshift(updatedBook); // Adiciona o novo livro no início da lista
+    } else {
+      // Se o livro já existe, move para o início da lista
+      const index = updatedBooks.findIndex(
+        (book) => book.id === updatedBook.id
+      );
+      const [bookToMove] = updatedBooks.splice(index, 1); // Remove o livro da posição atual
+      updatedBooks.unshift(bookToMove); // Adiciona no início da lista
     }
     // Atualiza o estado e salva no localStorage
     setBooks(updatedBooks);
