@@ -44,38 +44,42 @@ export function Catalogue() {
     setBooks(combinedBooks);
   }, []);
 
-  // Salvar os livros atualizados no localStorage
+  // Salvar os livros no localStorage
   const saveToLocalStorage = (updatedBooks: Book[]) => {
-    const booksToSave = updatedBooks.filter(
-      (book) => !booksDb.some((b) => b.id === book.id)
-    );
-    localStorage.setItem("books", JSON.stringify(booksToSave));
+    localStorage.setItem("books", JSON.stringify(updatedBooks));
   };
 
-  // CRUD - Create
   const handleAddClick = () => {
     setBookToEdit(emptyBook);
     setShowModalForm(true);
   };
 
-  const addBook = (newBook: Book) => {
-    const updatedBooks = [...books, newBook];
-    setBooks(updatedBooks);
-    saveToLocalStorage(updatedBooks); // Salvar no localStorage após adicionar o novo livro
-  };
+  // const addBook = (newBook: Book) => {
+  //   const updatedBooks = [...books, newBook];
+  //   setBooks(updatedBooks);
+  //   saveToLocalStorage(updatedBooks); // Salvar no localStorage após adicionar o novo livro
+  // };
 
-  // CRUD - Update
   const handleUpdateClick = (book: Book) => {
     if (book.id !== "") setBookToEdit(book);
     setShowModalForm(true);
   };
 
+  // CRUD - Create+Update
   const updateBook = (updatedBook: Book) => {
+    // Atualiza ou mantém os livros existentes
     const updatedBooks = books.map((book) =>
       book.id === updatedBook.id ? updatedBook : book
     );
+    // Verifica se o livro atualizado já existe na lista
+    const bookExists = books.some((book) => book.id === updatedBook.id);
+    // Se o livro não existe, adiciona à lista
+    if (!bookExists) {
+      updatedBooks.push(updatedBook);
+    }
+    // Atualiza o estado e salva no localStorage
     setBooks(updatedBooks);
-    saveToLocalStorage(updatedBooks); // Salvar no localStorage após atualizar o livro
+    saveToLocalStorage(updatedBooks);
   };
 
   // CRUD - Delete
@@ -153,7 +157,7 @@ export function Catalogue() {
           isOpen={showModalForm}
           book={bookToEdit ? bookToEdit : emptyBook}
           onClose={cancel}
-          onConfirm={bookToEdit?.id !== "" ? updateBook : addBook}
+          onConfirm={updateBook}
         />
         <ModalDelete
           isOpen={showModalDelete}

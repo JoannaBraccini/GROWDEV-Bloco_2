@@ -39,22 +39,18 @@ export function ModalForm({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (title && author && yearPublished && genre && synopsis) {
-      const updatedBook: Book = {
-        ...book,
-        title,
-        author,
-        yearPublished,
-        genre,
-        synopsis,
-        id: book.id || uuid(), // Se for novo, gera um id
-        registerDate: book.registerDate || new Date(),
-      };
-      onConfirm(updatedBook); // Passa o livro atualizado ou novo para o componente pai (catalogue)
-      onClose();
-    } else {
-      alert("Todos os campos são obrigatórios!");
-    }
+    const updatedBook: Book = {
+      ...book,
+      title,
+      author,
+      yearPublished,
+      genre,
+      synopsis,
+      id: book.id || uuid(), // Se for novo, gera um id
+      registerDate: book.registerDate || new Date(),
+    };
+    onConfirm(updatedBook); // Passa o livro atualizado ou novo para o componente pai (catalogue)
+    onClose();
   };
 
   return (
@@ -78,6 +74,7 @@ export function ModalForm({
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
+                    required
                   />
                 </label>
                 <label>
@@ -86,6 +83,7 @@ export function ModalForm({
                     type="text"
                     value={author}
                     onChange={(e) => setAuthor(e.target.value)}
+                    required
                   />
                 </label>
                 <label>
@@ -94,6 +92,7 @@ export function ModalForm({
                     type="number"
                     value={yearPublished}
                     onChange={(e) => setYearPublished(e.target.value)}
+                    required
                   />
                 </label>
                 <label>
@@ -102,6 +101,7 @@ export function ModalForm({
                     type="text"
                     value={genre}
                     onChange={(e) => setGenre(e.target.value)}
+                    required
                   />
                 </label>
                 <label>
@@ -109,6 +109,7 @@ export function ModalForm({
                   <textarea
                     value={synopsis}
                     onChange={(e) => setSynopsis(e.target.value)}
+                    required
                   />
                 </label>
                 <div className="buttons">
