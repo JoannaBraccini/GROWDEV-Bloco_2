@@ -1,25 +1,24 @@
 import { Button } from "./styles/Button";
-import { ModalStyle } from "./styles/ModalStyle";
+import { Modal } from "./styles/Modal";
 import { Title } from "./styles/Title";
 
-interface ModalDeleteProps {
+interface ModalExcludeProps {
   isOpen: boolean;
   bookTitle: string;
-  bookId: string;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-export function ModalDelete({
+export function ModalExclude({
   isOpen,
   bookTitle,
   onClose,
   onConfirm,
-}: ModalDeleteProps) {
+}: ModalExcludeProps) {
   return (
     <>
       {isOpen && (
-        <ModalStyle onClick={onClose}>
+        <Modal onClick={onClose}>
           <div
             className="wrapper"
             onClick={(e) => {
@@ -30,15 +29,15 @@ export function ModalDelete({
             <p>Essa alteração não pode ser desfeita.</p>
 
             <div className="buttons">
-              <Button size="small" variant="dark" onClick={onClose}>
-                Cancelar
-              </Button>
               <Button size="small" onClick={onConfirm}>
                 Confirmar
               </Button>
+              <Button size="small" variant="dark" onClick={onClose}>
+                Cancelar
+              </Button>
             </div>
           </div>
-        </ModalStyle>
+        </Modal>
       )}
     </>
   );
