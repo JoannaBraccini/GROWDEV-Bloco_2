@@ -113,7 +113,8 @@ export function ModalForm({
                   />
                 </label>
                 <div className="buttons">
-                  <Button type="submit" size="small">
+                  <Button type="button" size="small" onClick={handleSubmit}>
+                    {/*mudança para type button e adição do onClick impediu com sucesso a atualização da pagina*/}
                     {book.id ? "Atualizar" : "Adicionar"}
                   </Button>
                   <Button
